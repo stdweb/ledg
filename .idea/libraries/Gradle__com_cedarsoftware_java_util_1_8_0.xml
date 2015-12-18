@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: com.cedarsoftware:java-util:1.8.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/cedarsoftware/java-util/1.8.0/java-util-1.8.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
