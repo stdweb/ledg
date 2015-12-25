@@ -24,6 +24,8 @@ class LedgerAccount {
     var nonce       : Long = -1
     var isContract  : Boolean = false
 
+
+    //todo: del lastblock, firstblock but create indexes on thees fields
     @ManyToOne(fetch = FetchType.LAZY)
     var lastBlock   : LedgerBlock?  = null
 
@@ -38,7 +40,8 @@ class LedgerAccount {
     var stateRoot   : ByteArray = ByteUtil.EMPTY_BYTE_ARRAY
 
     var txCount     : Int = 0
-    var entrCnt     : Int =0
+
+    var entrCnt     : Int = 0
 
 
 

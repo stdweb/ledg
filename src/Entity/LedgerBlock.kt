@@ -14,13 +14,13 @@ import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
-class LedgerBlock
-{
+@Table(indexes = arrayOf( Index (unique = true,name = "UIX_block_hash",columnList = "HASH")))
+class LedgerBlock {
     @Id var id: Int = 0
 
     @JsonIgnore
-    @NaturalId
-    @Column(length = 32)    var hash : ByteArray = ByteUtil.EMPTY_BYTE_ARRAY
+    //@NaturalId
+    @Column(length = 32)    var hash  = ByteUtil.EMPTY_BYTE_ARRAY
 
     var timestamp : Long = 0
 
@@ -95,6 +95,12 @@ class LedgerBlock
     {
         ByteUtil.ZERO_BYTE_ARRAY
         throw NotImplementedError()
+    }
+
+    constructor(){}
+    constructor( _id : Int )
+    {
+        this.id=_id
     }
 
 }

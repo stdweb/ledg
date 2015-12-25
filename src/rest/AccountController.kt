@@ -3,7 +3,7 @@ package ledg.rest
 
 import Core.Convert2json
 import Core.EntryResult
-import Core.EntryType
+
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -21,6 +21,10 @@ import ledg.Utils
 
 import ledg.Utils.address_decode
 
+import Core.EntryType
+import ledg.Entity.LedgerAccount
+import ledg.Repository.LedgerBlockRepository
+
 /**
  * Created by bitledger on 13.11.15.
  */
@@ -30,6 +34,10 @@ class AccountController{
 
     @Autowired
     var ledgRepo : LedgerEntryRepository? = null
+
+    @Autowired
+    var blockRepo : LedgerBlockRepository? = null
+
 
     @Autowired
     var acckRepo : LedgerAccountRepository? = null
@@ -46,6 +54,7 @@ class AccountController{
         val addr=address_decode(accountId)
         val acc   = acckRepo?.findByAddress(addr)
         val offs=(page.toInt()-1)*25
+        val zeroAccount= LedgerAccount(Utils.ZERO_BYTE_ARRAY_20)
 
         //val content = ledgRepo?.getAccountLedgerPage(acc!!.id,offs) ?:  ArrayList<LedgerEntry>()
         //val content = ledgRepo?.getAccountLedger(acc!!.id,offs,page.toInt()*25) ?:  ArrayList<LedgerEntry>()
@@ -59,7 +68,7 @@ class AccountController{
                 with (LedgerEntry()) {
                     account             = it.account
                     tx                  = it.tx
-                    offsetAccount       = it.offsetAccount
+                    offsetAccount       = zeroAccount
                     amount              = it.fee.negate()
                     block               = it.block
                     blockTimestamp      = it.blockTimestamp
@@ -78,20 +87,26 @@ class AccountController{
 
         val ret=HashMap<String,Any>()
 
+
+        val firstBlock  =blockRepo?.findOne(ledgRepo?.getFirstAccountBlock(acc?.id ))
+        val lastBlock   =blockRepo?.findOne(ledgRepo?.getLastAccountBlock(acc?.id ))
+
         val entriesCount=ledgRepo?.getEntriesCount(acc!!.id) ?: 0
         with(ret){
             put("entries_count", entriesCount)
             put("page_count",entriesCount/25+1)
-            put("balance", Convert2json.BD2ValStr(acc?.balance,false))
+            put("balance",Convert2json.BD2ValStr(acc?.balance,false))
             put("addresstype",if (acc?.isContract ?: false) "Contract" else "account")
             put("entries", result)
-            put("firstblock","${acc?.firstBlock?.id}, Date ${acc?.firstBlock?.BlockDateTime}")
-            put("lastblock","${acc?.lastBlock?.id}, Date ${acc?.lastBlock?.BlockDateTime}")
+            put("firstblock","${firstBlock?.id}, Date ${firstBlock?.BlockDateTime}")
+            put("lastblock","${lastBlock?.id}, Date ${lastBlock?.BlockDateTime}")
         }
         Utils.log("AccountLedger", t1, request, res)
 
         return ret
     }
+
+
 }
 
 

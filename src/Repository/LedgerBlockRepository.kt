@@ -31,23 +31,25 @@ interface  ILedgerBlockRepositoryCustom
     public fun deleteBlockWithEntriesFrom(b : LedgerBlock)
     @Transactional
     public fun deleteBlockWithEntriesFrom(id : Int)
-
     //public fun getPage(blockId: String) : List<LedgerBlock?>
 
 }
 
-class LedgerBlockRepositoryImpl : ILedgerBlockRepositoryCustom
+open class LedgerBlockRepositoryImpl : ILedgerBlockRepositoryCustom
 {
     @Autowired
-    var blockRepo   : LedgerBlockRepository? = null
+    var blockRepo : LedgerBlockRepository? = null
     @Autowired
-    var ledgerRepo  : LedgerEntryRepository? = null
+    var ledgerRepo : LedgerEntryRepository? = null
     @Autowired
-    var txRepo      : LedgerTxRepository? = null
+    var txRepo : LedgerTxRepository? = null
     @Autowired
-    var logRepo     : LedgerTxLogRepository? = null
+    var logRepo : LedgerTxLogRepository? = null
     @Autowired
     var receiptRepo : LedgerTxReceiptRepository? = null
+
+    @Autowired
+    var accRepo : LedgerAccountRepository? = null
 
 
 //    override fun getPage(blockId: String): List<LedgerBlock?> {
@@ -75,26 +77,31 @@ class LedgerBlockRepositoryImpl : ILedgerBlockRepositoryCustom
         deleteBlockWithEntriesFrom(b.id)
     }
 
-    override fun deleteBlockWithEntries(id : Int)
+    //@Transactional(propagation = Propagation.REQUIRES_NEW)
+    override open fun deleteBlockWithEntries(id : Int)
     {
-        ledgerRepo  !!   .deleteByBlockNumber(id)
-        receiptRepo !!   .deleteByBlockNumber(id)
-        logRepo     !!   .deleteByBlockNumber(id)
-        txRepo      !!   .deleteByBlockNumber(id)
 
-        blockRepo   !!   .deleteByBlockNumber(id)
-
+        ledgerRepo  !!.deleteByBlockNumber(id)
+        receiptRepo !!.deleteByBlockNumber(id)
+        logRepo     !!.deleteByBlockNumber(id)
+        txRepo      !!.deleteByBlockNumber(id)
+        blockRepo   !!.deleteByBlockNumber(id)
     }
 
 
+
+    //@Transactional(propagation = Propagation.REQUIRES_NEW)
     override fun deleteBlockWithEntries(b: LedgerBlock)
     {
         deleteBlockWithEntries(b.id)
     }
 
     override fun topBlock(): LedgerBlock? {
+
         return blockRepo?.findOne(blockRepo?.topBlockId())
     }
+
+
 
     public override fun get(b : Int ) : LedgerBlock?
     {
@@ -111,7 +118,7 @@ class LedgerBlockRepositoryImpl : ILedgerBlockRepositoryCustom
             try {
                 return get(Utils.hash_decode(b))
             }
-            catch (e : HashDecodeException)
+            catch (e : HashDecodeException )
             {
                 return  null
             }
@@ -146,6 +153,8 @@ interface LedgerBlockRepository : PagingAndSortingRepository<LedgerBlock, Int> ,
 
     @Query("select b   from LedgerBlock b where b.id between :from and :to order by id desc")
     public fun getBlockRange(@Param("from") from : Int,@Param("to") to : Int) : List<LedgerBlock>
+
+
 
 
 
