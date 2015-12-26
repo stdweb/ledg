@@ -53,6 +53,9 @@ class AccountController{
 
         val addr=address_decode(accountId)
         val acc   = acckRepo?.findByAddress(addr)
+        if (acc==null)
+            return HashMap()
+
         val offs=(page.toInt()-1)*25
         val zeroAccount= LedgerAccount(Utils.ZERO_BYTE_ARRAY_20)
 

@@ -47,8 +47,11 @@ class TxController {
                         EntryType.Genesis,
                         EntryType.ContractCreation )
         }
+
+        result.forEach { it.amount=it.amount.negate() }
+
         Utils.log("tx",t1,request,ret);
-        return content
+        return result
     }
 
     @RequestMapping(value = "/txs/{blockId}",method = arrayOf( RequestMethod.GET), produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))

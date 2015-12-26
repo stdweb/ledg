@@ -40,7 +40,7 @@ class BlockController {
             var ret : ResponseEntity<LedgerBlock>
 
             if (ledgerBlock == null) {
-                ret = ResponseEntity(null, HttpStatus.NOT_FOUND)
+                ret = ResponseEntity(LedgerBlock(), HttpStatus.NOT_FOUND)
             }
             else
                 ret = ResponseEntity<LedgerBlock>(ledgerBlock, HttpStatus.OK)

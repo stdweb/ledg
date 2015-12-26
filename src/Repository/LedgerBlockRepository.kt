@@ -122,6 +122,10 @@ open class LedgerBlockRepositoryImpl : ILedgerBlockRepositoryCustom
             {
                 return  null
             }
+            catch (e : Exception)
+            {
+                return null
+            }
         }
     }
 
