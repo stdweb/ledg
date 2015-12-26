@@ -62,7 +62,12 @@ class TxController {
         ret = ResponseEntity(null, HttpStatus.OK)
 
         val block   = blockRepo ?.get(blockId)
-        val content = ledgRepo  ?.getByBlockId(block?.id) ?: ArrayList<LedgerEntry>()
+
+        var content : List<LedgerEntry>
+        if (block?.id==0)
+            content = ledgRepo?.getGenesisEntries(25) ?: ArrayList<LedgerEntry>()
+        else
+            content = ledgRepo  ?.getByBlockId(block?.id) ?: ArrayList<LedgerEntry>()
 
         val result  = ArrayList<LedgerEntry>()
         with (content){

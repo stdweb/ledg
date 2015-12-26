@@ -26,6 +26,9 @@ interface LedgerEntryRepository : PagingAndSortingRepository<LedgerEntry, Int>
     @Query("select e from LedgerEntry e where e.block.id=:bnumber order by id")
     fun getByBlockId( @Param("bnumber") bnumber : Int? ) : List<LedgerEntry>
 
+    @Query("select e from LedgerEntry e where e.block.id=0 and id>:bnumber-25 and id <= :bnumber order by id")
+    fun getGenesisEntries( @Param("bnumber") bnumber : Int? ) : List<LedgerEntry>
+
     @Query("select e from LedgerEntry e where e.account.id=:bnumber order by id ")
     fun getByAccountId( @Param("bnumber") bnumber : Int? ) : List<LedgerEntry>
 
