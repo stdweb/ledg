@@ -19,7 +19,7 @@ class WeblogController{
     fun log(@RequestParam("ip") ip : String,@RequestParam("uri") uri:String,@RequestParam("duration") duration:  String,
     request : HttpServletRequest) : String
     {
-        println("ip: ${ip} uri ${uri} duration ${duration}")
+        //println("ip: ${ip} uri ${uri} duration ${duration}")
 
         val path=uri.split("/")
         if (path[1]=="css")

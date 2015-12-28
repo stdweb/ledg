@@ -23,6 +23,7 @@ import ledg.Utils.address_decode
 
 import Core.EntryType
 import ledg.Entity.LedgerAccount
+import ledg.Entity.LedgerBlock
 import ledg.Repository.LedgerBlockRepository
 
 /**
@@ -91,8 +92,8 @@ class AccountController{
         val ret=HashMap<String,Any>()
 
 
-        val firstBlock  =blockRepo?.findOne(ledgRepo?.getFirstAccountBlock(acc?.id ))
-        val lastBlock   =blockRepo?.findOne(ledgRepo?.getLastAccountBlock(acc?.id ))
+        val firstBlock : LedgerBlock? = null//blockRepo?.findOne(ledgRepo?.getFirstAccountBlock(acc?.id ))
+        val lastBlock : LedgerBlock?  =null//blockRepo?.findOne(ledgRepo?.getLastAccountBlock(acc?.id ))
 
         val entriesCount=ledgRepo?.getEntriesCount(acc!!.id) ?: 0
         with(ret){
@@ -101,8 +102,8 @@ class AccountController{
             put("balance",Convert2json.BD2ValStr(acc?.balance,false))
             put("addresstype",if (acc?.isContract ?: false) "Contract" else "account")
             put("entries", result)
-            put("firstblock","${firstBlock?.id}, Date ${firstBlock?.BlockDateTime}")
-            put("lastblock","${lastBlock?.id}, Date ${lastBlock?.BlockDateTime}")
+            //put("firstblock","${firstBlock?.id}, Date ${firstBlock?.BlockDateTime}")
+            //put("lastblock","${lastBlock?.id}, Date ${lastBlock?.BlockDateTime}")
         }
         Utils.log("AccountLedger", t1, request, res)
 
