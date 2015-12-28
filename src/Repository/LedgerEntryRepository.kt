@@ -44,7 +44,7 @@ interface LedgerEntryRepository : PagingAndSortingRepository<LedgerEntry, Int>
     @Query("select e from LedgerEntry e where e.account.id=:accid and accEntryInd > :from and accEntryInd <= :to")
     fun getAccountLedger(@Param("accid") accid : Int,@Param("from") from : Int,@Param("to") to : Int) : List<LedgerEntry>
 
-    @Query("select count(e) from LedgerEntry e where e.account.id=:accid")
+    @Query("select max(accentryind) from LedgerEntry e where e.account.id=:accid")
     fun getEntriesCount(@Param("accid") accid : Int) : Int
 
     @Query("select account from LedgerEntry e where e.block.id =:bnumber")
