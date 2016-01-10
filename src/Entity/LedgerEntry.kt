@@ -74,6 +74,9 @@ class LedgerEntry {
     @Transient var blockId: Int? = null
         get() = block?.id
 
+    @Transient var bl_str: String = "#"
+        get() = block?.id.toString()
+
     @Transient var BlockDateTime: String =""
         //get() = Convert2json.convertTimestamp2str(if (id == 0) 1438269973 else blockTimestamp)
         get() = Convert2json.convertTimestamp2str( blockTimestamp )

@@ -43,6 +43,50 @@ class AccountController{
     @Autowired
     var acckRepo : LedgerAccountRepository? = null
 
+
+    @RequestMapping(value = "/account1/{accountId}/{page}", method = arrayOf( RequestMethod.GET), produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
+    @ResponseBody
+    fun getAccountLedger1(@PathVariable accountId: String, @PathVariable page: String, request: HttpServletRequest)
+    :List<LedgerEntry>
+    {
+        val zeroAccount= LedgerAccount(Utils.ZERO_BYTE_ARRAY_20)
+
+        val addr=address_decode(accountId)
+        val acc   = acckRepo?.findByAddress(addr)
+        if (acc==null)
+            return ArrayList<LedgerEntry>()
+
+        val offs=0
+
+        val content = ledgRepo?.getAccountLedger(acc!!.id,offs,page.toInt()*25) ?:  ArrayList<LedgerEntry>()
+
+        val result  = ArrayList<LedgerEntry>()
+
+        content.forEach {
+            result.add(it)
+            if (it.fee.signum()==1)
+                with (LedgerEntry()) {
+                    account             = it.account
+                    tx                  = it.tx
+                    offsetAccount       = zeroAccount
+                    amount              = it.fee.negate()
+                    block               = it.block
+                    blockTimestamp      = it.blockTimestamp
+                    depth               = it.depth
+                    gasUsed             = 0
+                    entryType           = EntryType.TxFee
+                    fee                 = BigDecimal.ZERO
+                    grossAmount         = this.fee.negate()
+                    entryResult         = EntryResult.Ok
+
+                    balance             =it.balance
+                    it.balance          =it.balance.add(it.fee)
+                    result.add(this)
+                }
+        }
+        return result
+    }
+
     @RequestMapping(value = "/account/{accountId}/{page}", method = arrayOf( RequestMethod.GET), produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
     @ResponseBody
     fun getAccountLedger(@PathVariable accountId: String, @PathVariable page: String, request: HttpServletRequest)
@@ -93,7 +137,7 @@ class AccountController{
 
 
         val firstBlock : LedgerBlock? = null//blockRepo?.findOne(ledgRepo?.getFirstAccountBlock(acc?.id ))
-        val lastBlock : LedgerBlock?  =null//blockRepo?.findOne(ledgRepo?.getLastAccountBlock(acc?.id ))
+        val lastBlock  : LedgerBlock?  =null//blockRepo?.findOne(ledgRepo?.getLastAccountBlock(acc?.id ))
 
         val entriesCount=ledgRepo?.getEntriesCount(acc!!.id) ?: 0
         with(ret){
